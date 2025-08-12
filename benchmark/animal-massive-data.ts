@@ -56,9 +56,9 @@ class AnimalTrieBenchmark {
 
 	constructor(config: Partial<BenchmarkConfig> = {}) {
 		this.config = {
-			iterations: 1000,
-			warmupIterations: 100,
-			animalCount: 10000,
+			iterations: 100000,
+			warmupIterations: 1000,
+			animalCount: 10000000,
 			...config
 		};
 

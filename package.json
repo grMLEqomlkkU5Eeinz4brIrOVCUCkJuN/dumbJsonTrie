@@ -13,6 +13,7 @@
 		"test:coverage": "jest --coverage",
 		"benchmark": "node --expose-gc -r ts-node/register benchmark/benchmark.ts",
 		"benchmarkip": "node --expose-gc -r ts-node/register benchmark/ip-bench.ts",
+		"benchmarkmass": "node --expose-gc -r ts-node/register benchmark/animal-massive-data.ts",
 		"example:basic": "ts-node examples/basic-example.ts",
 		"example:streaming": "ts-node examples/file-streaming-example.ts",
 		"clean": "rimraf dist/",

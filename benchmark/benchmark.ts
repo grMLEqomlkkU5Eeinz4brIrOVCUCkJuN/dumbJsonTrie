@@ -131,7 +131,7 @@ class AnimalTrieBenchmark {
 			});
 
 			// Collect family prefixes for testing
-			if (i < 100) {
+			if (i < 1000) {
 				const parts = animalName.split("_");
 				if (parts.length > 1) {
 					this.familyPrefixes.push(parts[0]); // Family prefix
@@ -322,7 +322,7 @@ class AnimalTrieBenchmark {
 			},
 			(trie) => {
 				// Simulate wildlife monitoring and danger assessment
-				for (let i = 0; i < 100; i++) {
+				for (let i = 0; i < 1000; i++) {
 					const testAnimal = this.detailedAnimals[i % this.detailedAnimals.length];
 					const data = trie.getData(testAnimal);
           
@@ -362,7 +362,7 @@ class AnimalTrieBenchmark {
 			},
 			(trie) => {
 				// Simulate comprehensive behavioral analysis
-				for (let i = 0; i < 100; i++) {
+				for (let i = 0; i < 1000; i++) {
 					const testAnimal = this.detailedAnimals[i % this.detailedAnimals.length];
 					const data = trie.getData(testAnimal);
           
@@ -465,7 +465,7 @@ class AnimalTrieBenchmark {
 			},
 			(trie) => {
 				// Simulate species classification and taxonomy
-				for (let i = 0; i < 100; i++) {
+				for (let i = 0; i < 1000; i++) {
 					const testAnimal = this.detailedAnimals[i % this.detailedAnimals.length];
 					const data = trie.getData(testAnimal);
           
@@ -493,7 +493,7 @@ class AnimalTrieBenchmark {
 			() => new Trie<AnimalData>(),
 			(trie) => {
 				// Insert animal data with metadata - let Trie handle normalization
-				for (let i = 0; i < 100; i++) {
+				for (let i = 0; i < 1000; i++) {
 					trie.insert(this.testAnimals[i], this.testData[i]);
 				}
 			}
@@ -513,7 +513,7 @@ class AnimalTrieBenchmark {
 			},
 			(trie) => {
 				// Search for specific animals - let Trie handle normalization
-				for (let i = 0; i < 100; i++) {
+				for (let i = 0; i < 1000; i++) {
 					trie.search(this.testAnimals[i]);
 					trie.getData(this.testAnimals[i]);
 				}
@@ -577,7 +577,7 @@ class AnimalTrieBenchmark {
 			},
 			(trie) => {
 				// Delete some animals - let Trie handle normalization
-				for (let i = 0; i < 100; i++) {
+				for (let i = 0; i < 1000; i++) {
 					trie.delete(this.testAnimals[i]);
 				}
 			}
