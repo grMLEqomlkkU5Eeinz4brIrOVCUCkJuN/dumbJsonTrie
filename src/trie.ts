@@ -126,7 +126,7 @@ class Trie<T = unknown> {
 
 		if (!prefixNode) return results;
 
-		this._collectWords(prefixNode, prefix.toLowerCase(), results, limit);
+		this._collectWords(prefixNode, prefix, results, limit);
 		return results;
 	}
 
@@ -139,15 +139,13 @@ class Trie<T = unknown> {
 		if (!word || typeof word !== "string") return false;
 		
 		const normalizedWord = word.toLowerCase();
+		const result = this._deleteHelper(this.root, normalizedWord, 0);
 		
-		// First check if the word exists
-		if (!this.search(normalizedWord)) {
-			return false;
+		if (result) {
+			this.size--;
+			return true;
 		}
-		
-		// Word exists, so delete it
-		this._deleteHelper(this.root, normalizedWord, 0);
-		return true;
+		return false;
 	}
 
 	/**
@@ -253,34 +251,40 @@ class Trie<T = unknown> {
 		return new Transform({
 			objectMode: true,
 			transform: (chunk: Buffer, _encoding: BufferEncoding, callback: Function) => {
-				const lines = chunk.toString().split("\n");
-
-				for (const line of lines) {
-					if (skipEmpty && !line.trim()) continue;
-
-					try {
-						let word = line.trim();
-						let data: T | null = null;
-
-						if (transform) {
-							const result = transform(word);
-							if (result && typeof result === "object" && "word" in result) {
-								word = result.word || word;
-								data = (result.data as T) || null;
-							} else if (result) {
-								word = result;
+				const chunkStr = chunk.toString();
+				let startIndex = 0;
+				
+				for (let i = 0; i < chunkStr.length; i++) {
+					if (chunkStr[i] === "\n") {
+						const line = chunkStr.slice(startIndex, i);
+						startIndex = i + 1;
+						
+						if (skipEmpty && !line.trim()) continue;
+						
+						try {
+							let word = line.trim();
+							let data: T | null = null;
+							
+							if (transform) {
+								const result = transform(word);
+								if (result && typeof result === "object" && "word" in result) {
+									word = result.word || word;
+									data = (result.data as T) || null;
+								} else if (result) {
+									word = result;
+								}
 							}
+							
+							if (word) {
+								this.insert(word, data);
+							}
+						} catch (error) {
+							const errorMessage = error instanceof Error ? error.message : "Unknown error";
+							console.warn(`Error processing word: ${errorMessage}`);
 						}
-
-						if (word) {
-							this.insert(word, data);
-						}
-					} catch (error) {
-						const errorMessage = error instanceof Error ? error.message : "Unknown error";
-						console.warn(`Error processing word: ${errorMessage}`);
 					}
 				}
-
+				
 				callback();
 			}
 		});
@@ -330,8 +334,8 @@ class Trie<T = unknown> {
 			stats.avgDepth = depths.reduce((a, b) => a + b, 0) / depths.length;
 		}
 
-		// Rough memory calculation
-		stats.memoryUsage = stats.nodes * 64; // Rough estimate in bytes
+		// More accurate memory calculation
+		stats.memoryUsage = this._calculateActualMemoryUsage();
 
 		return stats;
 	}
@@ -354,8 +358,9 @@ class Trie<T = unknown> {
 	// Private helper methods
 	private _findNode(word: string): TrieNode<T> | null {
 		let node = this.root;
+		const normalizedWord = word.toLowerCase();
 
-		for (const char of word.toLowerCase()) {
+		for (const char of normalizedWord) {
 			const childNode = node.children.get(char);
 			if (!childNode) {
 				return null;
@@ -385,28 +390,25 @@ class Trie<T = unknown> {
 	private _deleteHelper(node: TrieNode<T>, word: string, index: number): boolean {
 		if (index === word.length) {
 			if (!node.isEndOfWord) return false;
-
+			
 			node.isEndOfWord = false;
 			node.data = null;
-			this.size--;
-
-			// Return true if this node has no children (can be deleted)
+			
 			return node.children.size === 0;
 		}
-
+		
 		const char = word[index];
 		const childNode = node.children.get(char);
-
+		
 		if (!childNode) return false;
-
+		
 		const shouldDeleteChild = this._deleteHelper(childNode, word, index + 1);
-
+		
 		if (shouldDeleteChild) {
 			node.children.delete(char);
-			// Return true if this node can also be deleted (has no children and is not end of word)
 			return node.children.size === 0 && !node.isEndOfWord;
 		}
-
+		
 		return false;
 	}
 
@@ -449,6 +451,27 @@ class Trie<T = unknown> {
 		for (const childNode of node.children.values()) {
 			this._calculateStats(childNode, depth + 1, stats, depths);
 		}
+	}
+
+	private _calculateActualMemoryUsage(): number {
+		let totalMemory = 0;
+		const stack: TrieNode<T>[] = [this.root];
+		
+		while (stack.length > 0) {
+			const node = stack.pop()!;
+			
+			// Estimate memory for this node
+			totalMemory += 24; // Basic object overhead
+			totalMemory += node.children.size * 8; // Map entries
+			totalMemory += node.data ? 16 : 0; // Data reference
+			
+			// Add children to stack
+			for (const child of node.children.values()) {
+				stack.push(child);
+			}
+		}
+		
+		return totalMemory;
 	}
 }
 
