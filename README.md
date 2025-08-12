@@ -30,44 +30,87 @@ This trie demonstrates what's possible even without optimizations, handling **ma
 #### **Performance Benchmarks**
 
 **🟢 BASIC OPERATIONS**
-* **Animal Data Insert**: 1.13K ops/sec (0.889ms avg)
-* **Animal Data Search**: 1.38K ops/sec (0.723ms avg)
-* **IP Address Insert**: 26.03K ops/sec (0.038ms avg)
-* **IP Address Search**: 31.57K ops/sec (0.032ms avg)
+* **Animal Data Insert**: 1.54K ops/sec (0.651ms avg)
+* **Animal Data Search**: 1.28K ops/sec (0.782ms avg)
+* **IP Address Insert**: 31.81K ops/sec (0.031ms avg)
+* **IP Address Search**: 32.30K ops/sec (0.031ms avg)
 
 **🔵 ADVANCED OPERATIONS**
-* **Animal Family Prefix Search**: 8.03K ops/sec (0.125ms avg)
-* **Animal Range Search (Multiple Families)**: **345.54K ops/sec** (0.003ms avg) ⚡
-* **Animal Data Delete**: 862.83 ops/sec (1.159ms avg)
-* **IP Subnet Prefix Search**: **290.66K ops/sec** (0.003ms avg) ⚡
-* **IP Range Search (Multiple Subnets)**: 260.78K ops/sec (0.004ms avg)
-* **IP Address Delete**: 26.65K ops/sec (0.038ms avg)
+* **Animal Family Prefix Search**: 9.02K ops/sec (0.111ms avg)
+* **Animal Range Search (Multiple Families)**: **305.14K ops/sec** (0.003ms avg) ⚡
+* **Animal Data Delete**: 1.23K ops/sec (0.815ms avg)
+* **IP Subnet Prefix Search**: **207.64K ops/sec** (0.005ms avg) ⚡
+* **IP Range Search (Multiple Subnets)**: 302.10K ops/sec (0.003ms avg)
+* **IP Address Delete**: 46.82K ops/sec (0.021ms avg)
 
 **🔴 DOMAIN-SPECIFIC ANALYSIS**
-* **Dangerous Animal Detection**: 2.93K ops/sec (0.341ms avg)
-* **Animal Behavioral Analysis**: 2.70K ops/sec (0.371ms avg)
-* **Habitat Analysis**: 295.25K ops/sec (0.003ms avg)
-* **Species Classification**: 3.00K ops/sec (0.333ms avg)
-* **Malicious IP Detection (DPI)**: 24.91K ops/sec (0.040ms avg)
-* **Threat Intelligence Lookup**: 30.62K ops/sec (0.033ms avg)
-* **Behavioral Analysis (Real-time)**: 21.19K ops/sec (0.047ms avg)
-* **Subnet Threat Analysis**: 26.43K ops/sec (0.038ms avg)
+* **Dangerous Animal Detection**: 2.86K ops/sec (0.350ms avg)
+* **Animal Behavioral Analysis**: 2.67K ops/sec (0.375ms avg)
+* **Habitat Analysis**: 348.94K ops/sec (0.003ms avg)
+* **Species Classification**: 3.08K ops/sec (0.324ms avg)
+* **Malicious IP Detection (DPI)**: 17.82K ops/sec (0.056ms avg)
+* **Threat Intelligence Lookup**: 23.65K ops/sec (0.042ms avg)
+* **Behavioral Analysis (Real-time)**: 16.66K ops/sec (0.060ms avg)
+* **Subnet Threat Analysis**: 23.22K ops/sec (0.043ms avg)
 
 **🟡 MEMORY EFFICIENCY**
 * **Total memory for 3K animals**: 1.12 MB
-* **Memory per animal**: 390.512 bytes
+* **Memory per animal**: 390.536 bytes
 * **Total memory for 3K IPs**: 1.02 MB
 * **Memory per IP**: 348.32 bytes
 * **Animal nodes**: 3,048 (efficient prefix sharing)
 * **IP nodes**: 3,043 (efficient subnet sharing)
 
 #### **Performance Highlights**
-* **Fastest operation**: Animal Range Search at **345.54K ops/sec**
-* **IP performance**: Subnet Prefix Search at **290.66K ops/sec**
-* **Performance range**: 400.48x difference (animals), 13.72x difference (IPs)
+* **Fastest operation**: Habitat Analysis at **348.94K ops/sec**
+* **IP performance**: Range Search at **302.10K ops/sec**
+* **Performance range**: 284.54x difference (animals), 18.13x difference (IPs)
 * **Memory usage**: Reasonable for datasets with shared prefixes
 * **Scale handling**: Can manage thousands of complex JSON objects across domains
 * **Cross-domain capability**: Handles both natural language (animals) and structured data (IPs) efficiently
+* **Optimization impact**: Delete operations improved significantly after eliminating double traversal
+
+### 🔍 **What Does Behavioral Analysis Do?**
+
+The behavioral analysis functions demonstrate how the trie can handle complex, multi-factor data analysis:
+
+#### **Animal Behavioral Analysis** (2.67K ops/sec)
+The `benchmarkBehavioralAnalysis()` function simulates wildlife management by:
+- **Scoring animals** on a 100-point scale based on multiple risk factors
+- **Risk assessment** using aggression scores, territorial behavior, and encounter history
+- **Habitat analysis** considering urban proximity and population density
+- **Time-based analysis** evaluating recent encounters and threat patterns
+- **Final classification** into risk levels: critical, high, medium, or low
+
+**Example scoring logic:**
+```typescript
+let behaviorScore = 100;
+if (data.aggressionScore > 70) behaviorScore -= 30;
+if (data.territorial) behaviorScore -= 15;
+if (data.behaviorType === "predator") behaviorScore -= 25;
+if (data.encounterCount > 10) behaviorScore -= 20;
+// ... more factors
+```
+
+#### **IP Behavioral Analysis** (16.66K ops/sec)
+The `benchmarkBehavioralAnalysis()` function simulates cybersecurity by:
+- **Threat scoring** based on suspicious activities (port scans, DDoS, botnet membership)
+- **Geographic risk assessment** considering location and ISP reputation
+- **Time-based threat analysis** evaluating recent attack patterns
+- **Real-time scoring** for immediate security response decisions
+- **Threat classification** into levels: critical, high, medium, or low
+
+**Example scoring logic:**
+```typescript
+let behaviorScore = 100;
+if (data.portScanAttempts > 0) behaviorScore -= Math.min(20, data.portScanAttempts / 10);
+if (data.ddosParticipation) behaviorScore -= 30;
+if (data.botnetMember) behaviorScore -= 40;
+if (data.torExitNode) behaviorScore -= 15;
+// ... more factors
+```
+
+Both functions demonstrate the trie's ability to efficiently retrieve complex metadata and perform real-time analysis on thousands of entries simultaneously.
 
 ### Use Cases
 

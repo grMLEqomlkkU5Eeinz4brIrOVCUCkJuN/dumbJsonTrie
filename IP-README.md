@@ -11,15 +11,15 @@ This trie isn't just for strings, it handles **real IP address operations** for 
 
 | Operation                          | Ops/sec      | Avg Time (ms) | Memory Usage | Notes                        |
 |-----------------------------------|--------------|----------------|--------------|------------------------------|
-| Insert (IP Address)               | 26.03K       | 0.038          | 7.11 MB     | Basic KV insert              |
-| Search (IP Address)               | 31.57K       | 0.032          | 8.21 MB     | Individual IP lookup         |
-| Prefix Search (IP Subnet)         | **290.66K**  | 0.003          | 7.84 MB     | **Fastest op** - CIDR match  |
-| Range Search (Multiple Subnets)   | 260.78K      | 0.004          | 8.30 MB     | Multi-subnet operations      |
-| Delete (IP)                       | 26.65K       | 0.038          | 7.98 MB     | IP removal                   |
-| **DPI: Malicious IP Detection**   | 24.91K       | 0.040          | 9.30 MB     | **Real-time threat analysis** |
-| **Threat Intelligence Lookup**    | 30.62K       | 0.033          | 9.08 MB     | **Comprehensive risk assessment** |
-| **Behavioral Analysis**           | 21.19K       | 0.047          | 9.30 MB     | **Dynamic threat scoring**   |
-| **Subnet Threat Analysis**        | 26.43K       | 0.038          | 7.90 MB     | **Network-wide security**    |
+| Insert (IP Address)               | 31.81K       | 0.031          | 7.08 MB     | Basic KV insert              |
+| Search (IP Address)               | 32.30K       | 0.031          | 8.22 MB     | Individual IP lookup         |
+| Prefix Search (IP Subnet)         | **207.64K**  | 0.005          | 7.82 MB     | **Fastest op** - CIDR match  |
+| Range Search (Multiple Subnets)   | 302.10K      | 0.003          | 8.32 MB     | Multi-subnet operations      |
+| Delete (IP)                       | 46.82K       | 0.021          | 8.24 MB     | IP removal                   |
+| **DPI: Malicious IP Detection**   | 17.82K       | 0.056          | 9.33 MB     | **Real-time threat analysis** |
+| **Threat Intelligence Lookup**    | 23.65K       | 0.042          | 9.11 MB     | **Comprehensive risk assessment** |
+| **Behavioral Analysis**           | 16.66K       | 0.060          | 9.30 MB     | **Dynamic threat scoring**   |
+| **Subnet Threat Analysis**        | 23.22K       | 0.043          | 7.89 MB     | **Network-wide security**    |
 
 #### Memory Efficiency
 
@@ -29,9 +29,9 @@ This trie isn't just for strings, it handles **real IP address operations** for 
 - Avg depth: 11.23
 - **Per-IP memory: ~348B** (highly efficient)
 
-🟢 **Performance range:** 13.72× between fastest and slowest  
-✅ **Fastest:** IP Subnet Prefix Search (290.66K ops/sec)  
-🐌 **Slowest:** Behavioral Analysis (21.19K ops/sec)
+🟢 **Performance range:** 18.13× between fastest and slowest  
+✅ **Fastest:** IP Range Search (302.10K ops/sec)  
+🐌 **Slowest:** Behavioral Analysis (16.66K ops/sec)
 
 ---
 
