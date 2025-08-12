@@ -141,7 +141,7 @@ class Trie<T = unknown> {
 		const normalizedWord = word.toLowerCase();
 		const result = this._deleteHelper(this.root, normalizedWord, 0);
 		
-		if (result) {
+		if (result.deleted) {
 			this.size--;
 			return true;
 		}
@@ -387,29 +387,37 @@ class Trie<T = unknown> {
 		}
 	}
 
-	private _deleteHelper(node: TrieNode<T>, word: string, index: number): boolean {
+	private _deleteHelper(
+		node: TrieNode<T>,
+		word: string,
+		index: number
+	): { deleted: boolean; shouldDeleteThisNode: boolean } {
 		if (index === word.length) {
-			if (!node.isEndOfWord) return false;
+			if (!node.isEndOfWord) {
+				return { deleted: false, shouldDeleteThisNode: false };
+			}
 			
 			node.isEndOfWord = false;
 			node.data = null;
 			
-			return node.children.size === 0;
+			return { deleted: true, shouldDeleteThisNode: node.children.size === 0 };
 		}
 		
 		const char = word[index];
 		const childNode = node.children.get(char);
 		
-		if (!childNode) return false;
-		
-		const shouldDeleteChild = this._deleteHelper(childNode, word, index + 1);
-		
-		if (shouldDeleteChild) {
-			node.children.delete(char);
-			return node.children.size === 0 && !node.isEndOfWord;
+		if (!childNode) {
+			return { deleted: false, shouldDeleteThisNode: false };
 		}
 		
-		return false;
+		const childResult = this._deleteHelper(childNode, word, index + 1);
+		
+		if (childResult.shouldDeleteThisNode) {
+			node.children.delete(char);
+		}
+		
+		const shouldDeleteThisNode = node.children.size === 0 && !node.isEndOfWord;
+		return { deleted: childResult.deleted, shouldDeleteThisNode };
 	}
 
 	private _nodeToJSON(node: TrieNode<T>): TrieNodeJSON {
